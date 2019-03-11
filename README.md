@@ -1,2 +1,2 @@
-# cakeblog
+# CakeBlog
 Blog with cakephp3
