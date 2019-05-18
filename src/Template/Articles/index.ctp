@@ -16,7 +16,7 @@
    <? foreach ($articles as $article): ?>
    <div class="mb-3">
       <h2 class="blog-post-title">
-         <a href="/blog/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
+         <a href="/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
             <?= $article->title ?>
          </a>
       </h2>

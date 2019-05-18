@@ -21,7 +21,7 @@
       ]); ?>
    </div>
    <button type="submit" class="btn btn-sm btn-outline-primary shadow-sm">Guardar</button>
-   <a href="/" class="btn btn-sm btn-outline-secondary shadow-sm">Cancelar</a>
+   <a href="<?= $referer ?>" class="btn btn-sm btn-outline-secondary shadow-sm">Cancelar</a>
 
    <?= $this->Form->end(); ?>
 </div>

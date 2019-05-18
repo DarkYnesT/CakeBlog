@@ -61,6 +61,9 @@ class ArticlesController extends AppController
 
    public function view($id = null)
    {
+      $login = false;
+      //Si esta logeado enviamos true a la vista
+      if ($this->Auth->user()) $login = true;
       //Obtener un articulo por id
       $article = $this->Articles->getArticlesWithNameById($id);
       $articles = $this->Articles->find('all');
@@ -68,6 +71,7 @@ class ArticlesController extends AppController
       $this->set([
          'article' => $article,
          'allArticles' => $articles,
+         'login' => $login
       ]);
    }
 
@@ -113,7 +117,7 @@ class ArticlesController extends AppController
          if ($this->Articles->save($article)) {
             $this->Flash->success(__('Tu artículo ha sido actualizado.'));
             $this->redirect([
-               'action' => 'edit',
+               'action' => 'view',
                $id
             ]);
          } else {
@@ -125,6 +129,7 @@ class ArticlesController extends AppController
       $this->set([
          'article' => $article,
          'allArticles' => $articles,
+         'referer' => $this->referer()
       ]);
    }
 
