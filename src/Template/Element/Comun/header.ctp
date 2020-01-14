@@ -7,7 +7,7 @@
          <a class="blog-header-logo text-dark" href="/">Blog</a>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
-         <? if($this->request->session()->check('Auth.User')): ?>
+         <?php if($this->request->session()->check('Auth.User')): ?>
             <span class="pr-3 text-capitalize">
                Bienvenido:
                <?= $this->request->session()->read('Auth.User.username') ?>
@@ -15,9 +15,9 @@
             <a class="btn btn-sm btn-outline-secondary shadow-sm" href="/logout">
                Log out
             </a>
-         <? else: ?>
+         <?php else: ?>
             <a class="btn btn-sm btn-outline-secondary shadow-sm" href="/login">Sign in</a>
-         <? endif; ?>
+         <?php endif; ?>
       </div>
    </div>
 </header>

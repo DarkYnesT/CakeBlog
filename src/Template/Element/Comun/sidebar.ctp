@@ -5,8 +5,8 @@
 <div class="p-4">
    <h4 class="font-italic">Articles</h4>
    <ol class="list-unstyled mb-0">
-      <? foreach ($allArticles as $article): ?>
+      <?php foreach ($allArticles as $article): ?>
          <li><a href="/blog/articulo/<?= $article->id ?>"><?= $article->title ?></a></li>
-      <? endforeach; ?>
+      <?php endforeach; ?>
    </ol>
 </div>

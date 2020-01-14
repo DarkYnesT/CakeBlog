@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestCacheStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -46,7 +45,6 @@ class TestCacheStaticConfig
  */
 class TestEmailStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -66,7 +64,6 @@ class TestEmailStaticConfig
  */
 class TestLogStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -268,7 +265,7 @@ class StaticConfigTraitTest extends TestCase
                 'console' => 'Special\EngineLog',
                 'file' => 'Cake\Log\Engine\FileLog',
                 'syslog' => 'Cake\Log\Engine\SyslogLog',
-                'my' => 'Special\OtherLog'
+                'my' => 'Special\OtherLog',
             ];
             $result = TestLogStaticConfig::dsnClassMap(['my' => 'Special\OtherLog']);
             $this->assertEquals($expected, $result, 'Should be possible to add to the map');

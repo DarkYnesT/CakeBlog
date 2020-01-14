@@ -253,7 +253,7 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test using `cake --verson` invokes the version command
+     * Test using `cake --version` invokes the version command
      *
      * @return void
      */
@@ -389,7 +389,7 @@ class CommandRunnerTest extends TestCase
     {
         $app = $this->makeAppWithCommands([
             'tool build' => DemoCommand::class,
-            'tool' => AbortCommand::class
+            'tool' => AbortCommand::class,
         ]);
         $output = new ConsoleOutput();
 
@@ -410,7 +410,7 @@ class CommandRunnerTest extends TestCase
     {
         $app = $this->makeAppWithCommands([
             'tool build assets' => DemoCommand::class,
-            'tool' => AbortCommand::class
+            'tool' => AbortCommand::class,
         ]);
         $output = new ConsoleOutput();
 
@@ -498,7 +498,7 @@ class CommandRunnerTest extends TestCase
         $app = $this->getMockBuilder(BaseApplication::class)
             ->setMethods([
                 'middleware', 'bootstrap', 'routes',
-                'pluginBootstrap', 'pluginConsole', 'pluginRoutes'
+                'pluginBootstrap', 'pluginConsole', 'pluginRoutes',
             ])
             ->setConstructorArgs([$this->config])
             ->getMock();

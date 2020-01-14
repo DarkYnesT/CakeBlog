@@ -49,7 +49,7 @@ class EmailTraitTest extends TestCase
             'from' => 'alternate@example.com',
         ]);
         TransportFactory::setConfig('test_tools', [
-            'className' => TestEmailTransport::class
+            'className' => TestEmailTransport::class,
         ]);
     }
 
@@ -103,13 +103,14 @@ class EmailTraitTest extends TestCase
 
         $this->sendEmails();
 
-        $this->assertMailCount(2);
+        $this->assertMailCount(3);
 
         $this->assertMailSentFromAt(0, 'default@example.com');
         $this->assertMailSentFromAt(1, 'alternate@example.com');
 
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');
+        $this->assertMailSentToAt(2, 'to3@example.com');
 
         $this->assertMailContainsAt(0, 'text');
         $this->assertMailContainsAt(1, 'html');
@@ -157,6 +158,21 @@ class EmailTraitTest extends TestCase
         $this->sendEmails();
 
         $this->assertMailContainsTextAt(1, 'html');
+    }
+
+    /**
+     * Tests asserting using RegExp characters doesn't break the assertion
+     *
+     * @return void
+     */
+    public function testAssertUsingRegExpCharacters()
+    {
+        (new Email())
+            ->setTo('to3@example.com')
+            ->setCc('cc3@example.com')
+            ->send('email with regexp chars $/[]');
+
+        $this->assertMailContains('$/[]');
     }
 
     /**
@@ -219,6 +235,10 @@ class EmailTraitTest extends TestCase
             ->setTo('to2@example.com')
             ->setCc('cc2@example.com')
             ->setEmailFormat(Email::MESSAGE_HTML)
+            ->send('html');
+
+        (new Email('alternate'))
+            ->setTo(['to3@example.com' => null])
             ->send('html');
     }
 }

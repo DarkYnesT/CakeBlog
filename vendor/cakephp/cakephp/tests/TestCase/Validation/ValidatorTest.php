@@ -266,7 +266,7 @@ class ValidatorTest extends TestCase
     public function testFieldSetter()
     {
         $validator = new Validator();
-        $validationSet = new ValidationSet;
+        $validationSet = new ValidationSet();
         $validator->field('thing', $validationSet);
         $this->assertSame($validationSet, $validator->field('thing'));
     }
@@ -329,12 +329,12 @@ class ValidatorTest extends TestCase
 
         $validator->requirePresence([
             'title' => [
-                'mode' => false
+                'mode' => false,
             ],
             'content' => [
-                'mode' => 'update'
+                'mode' => 'update',
             ],
-            'subject'
+            'subject',
         ], true);
         $this->assertFalse($validator->field('title')->isPresenceRequired());
         $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
@@ -433,7 +433,7 @@ class ValidatorTest extends TestCase
         $validator->requirePresence('title');
 
         $data = [
-            'title' => 'Example title'
+            'title' => 'Example title',
         ];
 
         $expected = [];
@@ -461,20 +461,20 @@ class ValidatorTest extends TestCase
 
         $data = [
             'user' => [
-                'username' => 'is wrong'
+                'username' => 'is wrong',
             ],
             'comments' => [
-                ['comment' => 'is wrong']
-            ]
+                ['comment' => 'is wrong'],
+            ],
         ];
         $errors = $validator->errors($data);
         $expected = [
             'user' => [
-                'username' => ['letter' => 'The provided value is invalid']
+                'username' => ['letter' => 'The provided value is invalid'],
             ],
             'comments' => [
-                0 => ['comment' => ['letter' => 'The provided value is invalid']]
-            ]
+                0 => ['comment' => ['letter' => 'The provided value is invalid']],
+            ],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -542,8 +542,8 @@ class ValidatorTest extends TestCase
             'comments' => [
                 'a string',
                 ['comment' => 'letters'],
-                ['comment' => 'more invalid']
-            ]
+                ['comment' => 'more invalid'],
+            ],
         ];
         $errors = $validator->errors($data);
         $expected = [
@@ -580,20 +580,20 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Custom message'],
-            'content' => ['_required' => 'Custom message']
+            'content' => ['_required' => 'Custom message'],
         ];
         $this->assertEquals($expected, $errors);
 
         $validator->requirePresence([
             'title' => [
-                'message' => 'Test message'
+                'message' => 'Test message',
             ],
-            'content'
+            'content',
         ], true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Test message'],
-            'content' => ['_required' => 'Custom message']
+            'content' => ['_required' => 'Custom message'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -631,8 +631,8 @@ class ValidatorTest extends TestCase
             'created' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
-            ]
+                'day' => '',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty date');
@@ -646,7 +646,7 @@ class ValidatorTest extends TestCase
                 'minute' => '',
                 'second' => '',
                 'meridian' => '',
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty datetime');
@@ -656,7 +656,7 @@ class ValidatorTest extends TestCase
                 'hour' => '',
                 'minute' => '',
                 'meridian' => '',
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty time');
@@ -679,7 +679,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty date');
@@ -690,7 +690,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_OK,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertNotEmpty($result, 'Invalid file should be caught still.');
@@ -710,14 +710,14 @@ class ValidatorTest extends TestCase
             'subject',
             'posted_at' => [
                 'when' => false,
-                'message' => 'Post time cannot be empty'
+                'message' => 'Post time cannot be empty',
             ],
             'updated_at' => [
-                'when' => true
+                'when' => true,
             ],
             'show_at' => [
-                'when' => 'update'
-            ]
+                'when' => 'update',
+            ],
         ], 'create', 'Cannot be empty');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
         $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
@@ -730,13 +730,13 @@ class ValidatorTest extends TestCase
             'subject' => null,
             'posted_at' => null,
             'updated_at' => null,
-            'show_at' => ''
+            'show_at' => '',
         ], false);
 
         $expected = [
             'title' => ['_empty' => 'Cannot be empty'],
             'subject' => ['_empty' => 'Cannot be empty'],
-            'posted_at' => ['_empty' => 'Post time cannot be empty']
+            'posted_at' => ['_empty' => 'Post time cannot be empty'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -783,7 +783,7 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors($data));
 
         $validator = new Validator();
-        $validator->allowEmptyString('title', 'update', 'message');
+        $validator->allowEmptyString('title', 'message', 'update');
         $this->assertFalse($validator->isEmptyAllowed('title', true));
         $this->assertTrue($validator->isEmptyAllowed('title', false));
 
@@ -795,6 +795,167 @@ class ValidatorTest extends TestCase
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Ensure that allowEmptyString() works with deprecated arguments
+     *
+     * @return void
+     */
+    public function testAllowEmptyStringDeprecatedArguments()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyString('title', 'update', 'message');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => null,
+        ];
+        $expected = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Test allowEmptyString with callback
+     *
+     */
+    public function testAllowEmptyStringCallbackWhen()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyString(
+            'title',
+            'very required',
+            function ($context) {
+                return $context['data']['otherField'] === true;
+            }
+        )
+            ->scalar('title');
+
+        $data = [
+            'title' => '',
+            'otherField' => false,
+        ];
+        $this->assertNotEmpty($validator->errors($data));
+
+        $data = [
+            'title' => '',
+            'otherField' => true,
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
+     * Same as testAllowEmptyDateUpdateDeprecatedArguments but without message
+     *
+     * @return void
+     */
+    public function testAllowEmptyStringDeprecatedArgumentsWithoutMessage()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyString('title', 'update');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => null,
+        ];
+        $expected = [
+            'title' => ['_empty' => 'This field cannot be left empty'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyString method
+     *
+     * @return void
+     */
+    public function testNotEmptyString()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'not empty');
+
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertFalse($validator->isEmptyAllowed('title', false));
+
+        $data = ['title' => '0'];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['title' => 0];
+        $this->assertEmpty($validator->errors($data), 'empty ok on create');
+        $this->assertEmpty($validator->errors($data, false), 'empty ok on update');
+
+        $data = ['title' => []];
+        $this->assertEmpty($validator->errors($data), 'empty array is no good');
+
+        $expected = [
+            'title' => ['_empty' => 'not empty'],
+        ];
+        $data = ['title' => ''];
+        $this->assertSame($expected, $validator->errors($data, true));
+    }
+
+    /**
+     * Test notEmptyString with explicit create.
+     *
+     * @return void
+     */
+    public function testNotEmptyStringCreate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'message', 'create');
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $expected = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $data = ['title' => null];
+        $this->assertSame($expected, $validator->errors($data, true));
+
+        $data = ['title' => ''];
+        $this->assertSame($expected, $validator->errors($data, true));
+
+        $data = ['title' => ''];
+        $this->assertEmpty($validator->errors($data, false), 'empty allowed on update');
+    }
+
+    /**
+     * Test notEmptyString with callback
+     *
+     * @return void
+     */
+    public function testNotEmptyStringCallbackWhen()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'message', function ($context) {
+            if (!isset($context['data']['emptyOk'])) {
+                return true;
+            }
+
+            return $context['data']['emptyOk'];
+        });
+
+        $error = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $data = ['title' => ''];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = ['title' => '', 'emptyOk' => false];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['title' => '', 'emptyOk' => true];
+        $this->assertSame($error, $validator->errors($data));
     }
 
     /**
@@ -838,9 +999,17 @@ class ValidatorTest extends TestCase
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
+    }
 
+    /**
+     * Test allowEmptyArray with update mode
+     *
+     * @return void
+     */
+    public function testAllowEmptyArrayUpdate()
+    {
         $validator = new Validator();
-        $validator->allowEmptyArray('items', 'update', 'message');
+        $validator->allowEmptyArray('items', 'message', 'update');
         $this->assertFalse($validator->isEmptyAllowed('items', true));
         $this->assertTrue($validator->isEmptyAllowed('items', false));
 
@@ -852,6 +1021,64 @@ class ValidatorTest extends TestCase
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Test allowEmptyArray with update mode
+     *
+     * @return void
+     */
+    public function testAllowEmptyArrayUpdateDeprecatedOrder()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyArray('items', 'update', 'message');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('items', true));
+        $this->assertTrue($validator->isEmptyAllowed('items', false));
+
+        $data = [
+            'items' => null,
+        ];
+        $expected = [
+            'items' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyArray method
+     *
+     * @return void
+     */
+    public function testNotEmptyArray()
+    {
+        $validator = new Validator();
+        $validator->notEmptyArray('items', 'not empty');
+
+        $this->assertFalse($validator->field('items')->isEmptyAllowed());
+
+        $error = [
+            'items' => ['_empty' => 'not empty'],
+        ];
+        $data = ['items' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['items' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['items' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = [
+            'items' => [1],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -873,7 +1100,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
@@ -890,12 +1117,12 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_FORM_SIZE,
-            ]
+            ],
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -905,8 +1132,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -916,7 +1143,7 @@ class ValidatorTest extends TestCase
         $this->assertSame($expected, $result);
 
         $validator = new Validator();
-        $validator->allowEmptyArray('photo', 'update', 'message');
+        $validator->allowEmptyFile('photo', 'message', 'update');
         $this->assertFalse($validator->isEmptyAllowed('photo', true));
         $this->assertTrue($validator->isEmptyAllowed('photo', false));
 
@@ -928,6 +1155,97 @@ class ValidatorTest extends TestCase
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Test deprecated argument order for allowEmptyFile
+     *
+     * @return void
+     */
+    public function testAllowEmptyFileDeprecated()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyFile('photo', 'update', 'message');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('photo', true));
+        $this->assertTrue($validator->isEmptyAllowed('photo', false));
+
+        $data = [
+            'photo' => null,
+        ];
+        $expected = [
+            'photo' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyFile method
+     *
+     * @return void
+     */
+    public function testNotEmptyFile()
+    {
+        $validator = new Validator();
+        $validator->notEmptyFile('photo', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('photo', true));
+        $this->assertFalse($validator->isEmptyAllowed('photo', false));
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_NO_FILE,
+            ],
+        ];
+        $error = ['photo' => ['_empty' => 'required field']];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = ['photo' => null];
+        $this->assertSame($error, $validator->errors($data));
+
+        // Empty string and empty array don't trigger errors
+        // as rejecting them here would mean accepting them in
+        // allowEmptyFile() which is not desirable.
+        $data = ['photo' => ''];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['photo' => []];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_FORM_SIZE,
+            ],
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
+     * Test notEmptyFile with update mode.
+     *
+     * @retrn void
+     */
+    public function testNotEmptyFileUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyArray('photo', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('photo', true));
+        $this->assertFalse($validator->isEmptyAllowed('photo', false));
+
+        $data = ['photo' => null];
+        $expected = [
+            'photo' => ['_empty' => 'message'],
+        ];
+        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->errors($data, false));
     }
 
     /**
@@ -947,7 +1265,7 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
+                'day' => '',
             ],
         ];
         $result = $validator->errors($data);
@@ -968,9 +1286,17 @@ class ValidatorTest extends TestCase
         $data = ['date' => []];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
+    }
 
+    /**
+     * test allowEmptyDate() with an update condition
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateUpdate()
+    {
         $validator = new Validator();
-        $validator->allowEmptyArray('date', 'update', 'message');
+        $validator->allowEmptyArray('date', 'be valid', 'update');
         $this->assertFalse($validator->isEmptyAllowed('date', true));
         $this->assertTrue($validator->isEmptyAllowed('date', false));
 
@@ -978,10 +1304,99 @@ class ValidatorTest extends TestCase
             'date' => null,
         ];
         $expected = [
-            'date' => ['_empty' => 'message'],
+            'date' => ['_empty' => 'be valid'],
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * test allowEmptyDate() with an update condition
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateUpdateDeprecatedArguments()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyArray('date', 'update', 'be valid');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('date', true));
+        $this->assertTrue($validator->isEmptyAllowed('date', false));
+
+        $data = [
+            'date' => null,
+        ];
+        $expected = [
+            'date' => ['_empty' => 'be valid'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyDate method
+     *
+     * @return void
+     */
+    public function testNotEmptyDate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDate('date', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('date', true));
+        $this->assertFalse($validator->isEmptyAllowed('date', false));
+
+        $error = ['date' => ['_empty' => 'required field']];
+        $data = [
+            'date' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = [
+            'date' => [
+                'year' => 2019,
+                'month' => 2,
+                'day' => 17,
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test notEmptyDate with update mode
+     *
+     * @return void
+     */
+    public function testNotEmptyDateUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDate('date', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('date', true));
+        $this->assertFalse($validator->isEmptyAllowed('date', false));
+
+        $data = ['date' => null];
+        $expected = ['date' => ['_empty' => 'message']];
+        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->errors($data, true));
     }
 
     /**
@@ -1022,9 +1437,17 @@ class ValidatorTest extends TestCase
         $data = ['time' => []];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
+    }
 
+    /**
+     * test allowEmptyTime with condition
+     *
+     * @return void
+     */
+    public function testAllowEmptyTimeCondition()
+    {
         $validator = new Validator();
-        $validator->allowEmptyArray('time', 'update', 'message');
+        $validator->allowEmptyTime('time', 'valid time', 'update');
         $this->assertFalse($validator->isEmptyAllowed('time', true));
         $this->assertTrue($validator->isEmptyAllowed('time', false));
 
@@ -1032,14 +1455,97 @@ class ValidatorTest extends TestCase
             'time' => null,
         ];
         $expected = [
-            'time' => ['_empty' => 'message'],
+            'time' => ['_empty' => 'valid time'],
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
     }
 
     /**
-     * Tests the allowEmptyDate method
+     * test allowEmptyTime with deprecated argument order
+     *
+     * @return void
+     */
+    public function testAllowEmptyTimeConditionDeprecated()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyTime('time', 'update', 'valid time');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('time', true));
+        $this->assertTrue($validator->isEmptyAllowed('time', false));
+
+        $data = [
+            'time' => null,
+        ];
+        $expected = [
+            'time' => ['_empty' => 'valid time'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyTime method
+     *
+     * @return void
+     */
+    public function testNotEmptyTime()
+    {
+        $validator = new Validator();
+        $validator->notEmptyTime('time', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('time', true));
+        $this->assertFalse($validator->isEmptyAllowed('time', false));
+
+        $error = ['time' => ['_empty' => 'required field']];
+        $data = [
+            'time' => [
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => ['hour' => 12, 'minute' => 12, 'second' => 12]];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test notEmptyTime with update mode
+     *
+     * @return void
+     */
+    public function testNotEmptyTimeUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyTime('time', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('time', true));
+        $this->assertFalse($validator->isEmptyAllowed('time', false));
+
+        $data = ['time' => null];
+        $expected = ['time' => ['_empty' => 'message']];
+        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyDateTime method
      *
      * @return void
      */
@@ -1076,14 +1582,19 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertEmpty($result);
 
-        $data = [
-            'published' => [],
-        ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
+        $data = ['published' => []];
+        $this->assertEmpty($validator->errors($data));
+    }
 
+    /**
+     * test allowEmptyDateTime with a condition
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateTimeCondition()
+    {
         $validator = new Validator();
-        $validator->allowEmptyArray('published', 'update', 'message');
+        $validator->allowEmptyDateTime('published', 'datetime required', 'update');
         $this->assertFalse($validator->isEmptyAllowed('published', true));
         $this->assertTrue($validator->isEmptyAllowed('published', false));
 
@@ -1091,10 +1602,103 @@ class ValidatorTest extends TestCase
             'published' => null,
         ];
         $expected = [
-            'published' => ['_empty' => 'message'],
+            'published' => ['_empty' => 'datetime required'],
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * test allowEmptyDateTime with deprecated argument order
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateTimeDeprecated()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyDateTime('published', 'datetime required', 'update');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('published', true));
+        $this->assertTrue($validator->isEmptyAllowed('published', false));
+
+        $data = [
+            'published' => null,
+        ];
+        $expected = [
+            'published' => ['_empty' => 'datetime required'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyDateTime method
+     *
+     * @return void
+     */
+    public function testNotEmptyDateTime()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDateTime('published', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('published', true));
+        $this->assertFalse($validator->isEmptyAllowed('published', false));
+
+        $error = ['published' => ['_empty' => 'required field']];
+        $data = [
+            'published' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => []];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = [
+            'published' => [
+                'year' => '2018',
+                'month' => '2',
+                'day' => '17',
+                'hour' => '14',
+                'minute' => '32',
+                'second' => '33',
+            ],
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
+     * Test notEmptyDateTime with update mode
+     *
+     * @return voi
+     */
+    public function testNotEmptyDateTimeUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDatetime('published', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('published', true));
+        $this->assertFalse($validator->isEmptyAllowed('published', false));
+
+        $data = ['published' => null];
+        $expected = ['published' => ['_empty' => 'message']];
+        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->errors($data, true));
     }
 
     /**
@@ -1126,19 +1730,19 @@ class ValidatorTest extends TestCase
 
         $validator->notEmpty([
             'title' => [
-                'when' => false
+                'when' => false,
             ],
             'content' => [
-                'when' => 'update'
+                'when' => 'update',
             ],
             'posted_at' => [
-                'when' => 'create'
+                'when' => 'create',
             ],
             'show_at' => [
                 'message' => 'Show date cannot be empty',
-                'when' => false
+                'when' => false,
             ],
-            'subject'
+            'subject',
         ], 'Not empty', true);
 
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
@@ -1153,13 +1757,13 @@ class ValidatorTest extends TestCase
             'content' => '',
             'posted_at' => null,
             'show_at' => null,
-            'subject' => ''
+            'subject' => '',
         ], false);
 
         $expected = [
             'title' => ['_empty' => 'Not empty'],
             'content' => ['_empty' => 'Not empty'],
-            'show_at' => ['_empty' => 'Show date cannot be empty']
+            'show_at' => ['_empty' => 'Show date cannot be empty'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1392,16 +1996,16 @@ class ValidatorTest extends TestCase
     public function testProvider()
     {
         $validator = new Validator();
-        $object = new \stdClass;
+        $object = new \stdClass();
         $this->assertSame($validator, $validator->setProvider('foo', $object));
         $this->assertSame($object, $validator->getProvider('foo'));
         $this->assertNull($validator->getProvider('bar'));
 
-        $another = new \stdClass;
+        $another = new \stdClass();
         $this->assertSame($validator, $validator->setProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->getProvider('default'));
+        $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
     }
 
     /**
@@ -1421,8 +2025,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'email' => [
                 'alpha' => 'The provided value is invalid',
-                'email' => 'Y u no write email?'
-            ]
+                'email' => 'Y u no write email?',
+            ],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1447,17 +2051,17 @@ class ValidatorTest extends TestCase
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
                 $this->assertEquals('bar', $data);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider,
-                    'thing' => $thing
+                    'default' => new \Cake\Validation\RulesProvider(),
+                    'thing' => $thing,
                 ];
                 $expected = [
                     'newRecord' => true,
                     'providers' => $expected,
                     'data' => [
                         'email' => '!',
-                        'title' => 'bar'
+                        'title' => 'bar',
                     ],
-                    'field' => 'title'
+                    'field' => 'title',
                 ];
                 $this->assertEquals($expected, $context);
 
@@ -1468,7 +2072,7 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
-            'title' => ['cool' => "That ain't cool, yo"]
+            'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1484,7 +2088,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('title', 'cool', [
             'rule' => ['isCool', 'and', 'awesome'],
-            'provider' => 'thing'
+            'provider' => 'thing',
         ]);
         $thing = $this->getMockBuilder('\stdClass')
             ->setMethods(['isCool'])
@@ -1495,17 +2099,17 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('and', $a);
                 $this->assertEquals('awesome', $b);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider,
-                    'thing' => $thing
+                    'default' => new \Cake\Validation\RulesProvider(),
+                    'thing' => $thing,
                 ];
                 $expected = [
                     'newRecord' => true,
                     'providers' => $expected,
                     'data' => [
                         'email' => '!',
-                        'title' => 'bar'
+                        'title' => 'bar',
                     ],
-                    'field' => 'title'
+                    'field' => 'title',
                 ];
                 $this->assertEquals($expected, $context);
 
@@ -1514,7 +2118,7 @@ class ValidatorTest extends TestCase
         $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
-            'title' => ['cool' => "That ain't cool, yo"]
+            'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1532,7 +2136,7 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('foo', $data);
 
                 return 'You fail';
-            }
+            },
         ]);
         $expected = ['name' => ['myRule' => 'You fail']];
         $this->assertEquals($expected, $validator->errors(['name' => 'foo']));
@@ -1552,8 +2156,8 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => 'not an email!']);
         $expected = [
             'email' => [
-                'alpha' => 'The provided value is invalid'
-            ]
+                'alpha' => 'The provided value is invalid',
+            ],
         ];
 
         $this->assertEquals($expected, $errors);
@@ -1647,12 +2251,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('title', [
             'notBlank' => [
-                'rule' => 'notBlank'
+                'rule' => 'notBlank',
             ],
             'length' => [
                 'rule' => ['minLength', 10],
-                'message' => 'Titles need to be at least 10 characters long'
-            ]
+                'message' => 'Titles need to be at least 10 characters long',
+            ],
         ]);
         $set = $validator->field('title');
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
@@ -1669,12 +2273,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('password', [
             'compare' => [
-                'rule' => ['compareWith', 'password_compare']
+                'rule' => ['compareWith', 'password_compare'],
             ],
         ]);
         $data = [
             'password' => 'test',
-            'password_compare' => 'not the same'
+            'password_compare' => 'not the same',
         ];
         $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
     }

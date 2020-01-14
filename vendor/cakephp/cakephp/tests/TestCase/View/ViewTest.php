@@ -239,7 +239,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
     {
         return [
             'View.beforeRender' => 'beforeRender',
-            'View.afterRender' => 'afterRender'
+            'View.afterRender' => 'afterRender',
         ];
     }
 
@@ -343,7 +343,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
@@ -388,7 +388,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -414,7 +414,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -436,7 +436,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
@@ -465,7 +465,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -495,7 +495,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -524,7 +524,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $paths = Configure::read('App.paths.templates');
@@ -558,7 +558,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -584,7 +584,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -695,7 +695,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'action' => 'display'
+            'action' => 'display',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -725,7 +725,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'action' => 'display'
+            'action' => 'display',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -813,7 +813,7 @@ class ViewTest extends TestCase
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -833,7 +833,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'layout' => 'whatever'
+            'layout' => 'whatever',
         ];
         $View = new TestView(null, null, null, $viewOptions);
         $View->getLayoutFileName();
@@ -1029,7 +1029,7 @@ class ViewTest extends TestCase
             'engine' => 'File',
             'duration' => '+1 day',
             'path' => CACHE . 'views/',
-            'prefix' => ''
+            'prefix' => '',
         ]);
         Cache::clear(false, 'test_view');
 
@@ -1051,9 +1051,9 @@ class ViewTest extends TestCase
 
         $View->element('test_element', [
             'param' => 'one',
-            'foo' => 'two'
+            'foo' => 'two',
         ], [
-            'cache' => ['key' => 'custom_key']
+            'cache' => ['key' => 'custom_key'],
         ]);
         $result = Cache::read('element_custom_key', 'test_view');
         $this->assertEquals($expected, $result);
@@ -1061,7 +1061,7 @@ class ViewTest extends TestCase
         $View->setElementCache('default');
         $View->element('test_element', [
             'param' => 'one',
-            'foo' => 'two'
+            'foo' => 'two',
         ], [
             'cache' => ['config' => 'test_view'],
         ]);
@@ -1140,7 +1140,7 @@ class ViewTest extends TestCase
     public function testLoadHelpers()
     {
         $View = new View(null, null, null, [
-            'helpers' => ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']]
+            'helpers' => ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']],
         ]);
 
         $result = $View->loadHelpers();
@@ -1278,7 +1278,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->helpers = [
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
-            'Html'
+            'Html',
         ];
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
@@ -1295,7 +1295,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->helpers = [
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
-            'Html'
+            'Html',
         ];
         $this->PostsController->set('variable', 'values');
 
@@ -1636,14 +1636,14 @@ class ViewTest extends TestCase
     /**
      * Test setting a block's content to an object without __toString magic method
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockSetObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $objectWithToString = new TestObjectWithoutToString();
         $this->View->assign('testWithObjectWithoutToString', $objectWithToString);
     }
@@ -1693,14 +1693,14 @@ class ViewTest extends TestCase
     /**
      * Test appending an object without __toString magic method to a block with append.
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error     Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockAppendObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $object = new TestObjectWithoutToString();
         $this->View->assign('testBlock', 'Block ');
         $this->View->append('testBlock', $object);
@@ -1726,14 +1726,14 @@ class ViewTest extends TestCase
     /**
      * Test prepending an object without __toString magic method to a block with prepend.
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockPrependObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $object = new TestObjectWithoutToString();
         $this->View->assign('test', 'Block ');
         $this->View->prepend('test', $object);
@@ -2197,5 +2197,15 @@ TEXT;
             $this->assertEquals('mypath', $View->templatePath());
             $this->assertEquals('mypath', $View->templatePath);
         });
+    }
+
+    protected function checkException($message)
+    {
+        if (version_compare(PHP_VERSION, '7.4', '>=')) {
+            $this->expectException(\Error::class);
+        } else {
+            $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        }
+        $this->expectExceptionMessage($message);
     }
 }

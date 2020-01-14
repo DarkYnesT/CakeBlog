@@ -124,7 +124,7 @@ class QueryExpressionTest extends TestCase
             ],
             [
                 'Users.username' => 'string',
-                'Users.active' => 'boolean'
+                'Users.active' => 'boolean',
             ]
         );
 
@@ -199,7 +199,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn']
+            ['notLike'], ['in'], ['notIn'],
         ];
     }
 
@@ -234,8 +234,8 @@ class QueryExpressionTest extends TestCase
     public function testEmptyOr()
     {
         $expr = new QueryExpression();
-        $expr = $expr->or_([]);
-        $expr = $expr->or_([]);
+        $expr = $expr->or([]);
+        $expr = $expr->or([]);
         $this->assertCount(0, $expr);
 
         $expr = new QueryExpression(['OR' => []]);

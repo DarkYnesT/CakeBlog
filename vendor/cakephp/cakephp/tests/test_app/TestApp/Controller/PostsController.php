@@ -30,7 +30,7 @@ class PostsController extends AppController
     public $components = [
         'Flash',
         'RequestHandler' => [
-            'enableBeforeRedirect' => false
+            'enableBeforeRedirect' => false,
         ],
         'Security',
     ];
@@ -45,6 +45,8 @@ class PostsController extends AppController
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
+
+        $this->Security->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
     /**
@@ -114,6 +116,16 @@ class PostsController extends AppController
     public function header()
     {
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function hostData()
+    {
+        $data = [
+            'host' => $this->request->host(),
+            'isSsl' => $this->request->is('ssl'),
+        ];
+
+        return $this->getResponse()->withStringBody(json_encode($data));
     }
 
     public function empty_response()

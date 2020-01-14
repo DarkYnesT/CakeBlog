@@ -27,7 +27,6 @@ use Cake\Utility\Inflector;
  */
 class ExtractTask extends Shell
 {
-
     /**
      * Paths to use when looking for strings
      *
@@ -286,7 +285,7 @@ class ExtractTask extends Shell
 
         if (empty($this->_translations[$domain][$msgid][$context])) {
             $this->_translations[$domain][$msgid][$context] = [
-                'msgid_plural' => false
+                'msgid_plural' => false,
             ];
         }
 
@@ -342,44 +341,45 @@ class ExtractTask extends Shell
         $parser->setDescription(
             'CakePHP Language String Extraction:'
         )->addOption('app', [
-            'help' => 'Directory where your application is located.'
+            'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
-            'help' => 'Comma separated list of paths.'
+            'help' => 'Comma separated list of paths.',
         ])->addOption('merge', [
             'help' => 'Merge all domain strings into the default.po file.',
-            'choices' => ['yes', 'no']
+            'choices' => ['yes', 'no'],
         ])->addOption('relative-paths', [
             'help' => 'Use relative paths in the .pot file',
             'boolean' => true,
             'default' => false,
         ])->addOption('output', [
-            'help' => 'Full path to output directory.'
+            'help' => 'Full path to output directory.',
         ])->addOption('files', [
-            'help' => 'Comma separated list of files.'
+            'help' => 'Comma separated list of files.',
         ])->addOption('exclude-plugins', [
             'boolean' => true,
             'default' => true,
-            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.'
+            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
         ])->addOption('plugin', [
-            'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.'
+            'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.',
+            'short' => 'p',
         ])->addOption('ignore-model-validation', [
             'boolean' => true,
             'default' => false,
             'help' => 'Ignores validation messages in the $validate property.' .
                 ' If this flag is not set and the command is run from the same app directory,' .
-                ' all messages in model validation rules will be extracted as tokens.'
+                ' all messages in model validation rules will be extracted as tokens.',
         ])->addOption('validation-domain', [
-            'help' => 'If set to a value, the localization domain to be used for model validation messages.'
+            'help' => 'If set to a value, the localization domain to be used for model validation messages.',
         ])->addOption('exclude', [
             'help' => 'Comma separated list of directories to exclude.' .
-                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors'
+                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
         ])->addOption('overwrite', [
             'boolean' => true,
             'default' => false,
-            'help' => 'Always overwrite existing .pot files.'
+            'help' => 'Always overwrite existing .pot files.',
         ])->addOption('extract-core', [
             'help' => 'Extract messages from the CakePHP core libs.',
-            'choices' => ['yes', 'no']
+            'choices' => ['yes', 'no'],
         ])->addOption('no-location', [
             'boolean' => true,
             'default' => false,
@@ -535,14 +535,18 @@ class ExtractTask extends Shell
                 foreach ($contexts as $context => $details) {
                     $plural = $details['msgid_plural'];
                     $files = $details['references'];
-                    $occurrences = [];
-                    foreach ($files as $file => $lines) {
-                        $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
-                    }
-                    $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
+
                     if (!$this->param('no-location')) {
+                        $occurrences = [];
+                        foreach ($files as $file => $lines) {
+                            $lines = array_unique($lines);
+                            foreach ($lines as $line) {
+                                $occurrences[] = $file . ':' . $line;
+                            }
+                        }
+                        $occurrences = implode("\n#: ", $occurrences);
+
                         $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
 

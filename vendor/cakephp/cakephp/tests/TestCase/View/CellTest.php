@@ -218,12 +218,12 @@ class CellTest extends TestCase
 
         $e = null;
         try {
-            $cell->render('derp');
+            $cell->render('fooBar');
         } catch (MissingCellViewException $e) {
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('Cell view file "derp" is missing.', $e->getMessage());
+        $this->assertEquals('Cell view file "foo_bar.ctp" is missing.', $e->getMessage());
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 
@@ -477,7 +477,7 @@ class CellTest extends TestCase
         Cache::setConfig('cell', $mock);
 
         $cell = $this->View->cell('Articles', [], [
-            'cache' => ['key' => 'my_key', 'config' => 'cell']
+            'cache' => ['key' => 'my_key', 'config' => 'cell'],
         ]);
         $result = $cell->render();
         $this->assertEquals("dummy\n", $result);

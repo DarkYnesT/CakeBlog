@@ -42,7 +42,7 @@ class CurlTest extends TestCase
     {
         $request = new Request('http://localhost', 'GET', [
             'User-Agent' => 'CakePHP TestSuite',
-            'Cookie' => 'testing=value'
+            'Cookie' => 'testing=value',
         ]);
         try {
             $responses = $this->curl->send($request, []);
@@ -89,7 +89,7 @@ class CurlTest extends TestCase
     public function testBuildOptionsGet()
     {
         $options = [
-            'timeout' => 5
+            'timeout' => 5,
         ];
         $request = new Request(
             'http://localhost/things',
@@ -99,7 +99,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -108,6 +108,42 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_CAINFO => $this->caFile,
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsGetWithBody()
+    {
+        $options = [
+            'timeout' => 5,
+        ];
+        $request = new Request(
+            'http://localhost/things',
+            'GET',
+            ['Cookie' => 'testing=value'],
+            '{"some":"body"}'
+        );
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Cookie: testing=value',
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '{"some":"body"}',
+            CURLOPT_CUSTOMREQUEST => 'get',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];
@@ -131,7 +167,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -163,7 +199,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -196,7 +232,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -230,7 +266,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -257,13 +293,13 @@ class CurlTest extends TestCase
                 'proxy' => '127.0.0.1:8080',
                 'username' => 'frodo',
                 'password' => 'one_ring',
-            ]
+            ],
         ];
         $request = new Request('http://localhost/things', 'GET');
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -287,14 +323,16 @@ class CurlTest extends TestCase
     {
         $options = [
             'curl' => [
-                CURLOPT_USERAGENT => 'Super-secret'
-            ]
+                CURLOPT_USERAGENT => 'Super-secret',
+            ],
         ];
         $request = new Request('http://localhost/things', 'GET');
+        $request = $request->withProtocolVersion('1.0');
+
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -303,8 +341,24 @@ class CurlTest extends TestCase
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_CAINFO => $this->caFile,
-            CURLOPT_USERAGENT => 'Super-secret'
+            CURLOPT_USERAGENT => 'Super-secret',
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsProtocolVersion()
+    {
+        $this->skipIf(!defined('CURL_HTTP_VERSION_2TLS'), 'Requires libcurl 7.42');
+        $options = [];
+        $request = new Request('http://localhost/things', 'GET');
+        $request = $request->withProtocolVersion('2');
+
+        $result = $this->curl->buildOptions($request, $options);
+        $this->assertSame(CURL_HTTP_VERSION_2TLS, $result[CURLOPT_HTTP_VERSION]);
     }
 }

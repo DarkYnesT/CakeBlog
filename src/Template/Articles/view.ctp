@@ -16,22 +16,4 @@
       <span class="text-capitalize"><?= $article->user->username ?></span>
    </p>
    <p><?= str_replace(array("\r\n", "\n\r", "\r", "\n"), "<br />", $article->body) ?></p>
-   <? if ($login) : ?>
-      <? if (($article->user_id == $this->request->session()->read('Auth.User.id')) || (
-            $this->request->session()->read('Auth.User.role') == 'admin')): ?>
-         <div>
-            <?= $this->Html->link('Editar',
-               ['action' => 'edit', $article->id],
-               ['class' => 'btn btn-sm btn-outline-info shadow-sm']
-            ) ?>
-            <?= $this->Form->postLink('Eliminar',
-               ['action' => 'delete', $article->id],
-               [
-                  'confirm' => '¿Estás seguro?',
-                  'class' => 'btn btn-sm btn-outline-danger shadow-sm'
-               ]
-            ) ?>
-         </div>
-      <? endif; ?>
-   <? endif; ?>
 </div>

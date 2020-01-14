@@ -13,9 +13,11 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\Stub\MissingConsoleInputException;
 use PHPUnit\Framework\AssertionFailedError;
 
 class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
@@ -45,6 +47,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $this->exec('routes');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitSuccess();
     }
 
     /**
@@ -58,6 +61,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 
         $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitError();
     }
 
     /**
@@ -141,6 +145,18 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests exec with fewer inputs than questions
+     *
+     * @return void
+     */
+    public function testExecWithMissingInput()
+    {
+        $this->expectException(MissingConsoleInputException::class);
+        $this->expectExceptionMessage('no more input');
+        $this->exec('integration bridge', ['cake']);
+    }
+
+    /**
      * tests exec with multiple inputs
      *
      * @return void
@@ -196,7 +212,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $json = json_encode(['key' => '"val"', 'this' => true]);
         $result = $this->commandStringToArgs("   --json='$json'");
         $expected = [
-            '--json=' . $json
+            '--json=' . $json,
         ];
         $this->assertSame($expected, $result);
     }
@@ -232,10 +248,10 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty.', 'routes'],
             'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output.', 'routes', 'missing'],
             'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output.', 'routes', 'controller'],
-            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that /missing/ PCRE pattern found in output.', 'routes', '/missing/'],
-            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that Array (...) row was in output.', 'routes', ['test', 'missing']],
+            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output.', 'routes', '/missing/'],
+            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `Array (...)` row was in output.', 'routes', ['test', 'missing']],
             'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output.', 'routes', 'test'],
-            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that /test/ PCRE pattern found in error output.', 'routes', '/test/'],
+            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output.', 'routes', '/test/'],
             'assertErrorEmpty' => ['assertErrorEmpty', 'Failed asserting that error output is empty.', 'integration args_and_options'],
         ];
     }

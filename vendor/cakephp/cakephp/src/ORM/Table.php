@@ -126,7 +126,6 @@ use RuntimeException;
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -191,7 +190,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_primaryKey;
 
@@ -339,6 +338,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the database table name.
      *
+     * This can include the database schema name in the form 'schema.table'.
+     * If the name must be quoted, enable automatic identifier quoting.
+     *
      * @param string $table Table name.
      * @return $this
      */
@@ -351,6 +353,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * Returns the database table name.
+     *
+     * This can include the database schema name if set using `setTable()`.
      *
      * @return string
      */
@@ -659,7 +663,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the primary key field name.
      *
-     * @param string|array $key Sets a new name to be used as primary key
+     * @param string|string[] $key Sets a new name to be used as primary key
      * @return $this
      */
     public function setPrimaryKey($key)
@@ -672,7 +676,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the primary key field name.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getPrimaryKey()
     {
@@ -691,8 +695,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns the primary key field name or sets a new one
      *
      * @deprecated 3.4.0 Use setPrimaryKey()/getPrimaryKey() instead.
-     * @param string|array|null $key Sets a new name to be used as primary key
-     * @return string|array
+     * @param string|string[]|null $key Sets a new name to be used as primary key
+     * @return string|string[]
      */
     public function primaryKey($key = null)
     {
@@ -1437,7 +1441,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'keyField' => $this->getPrimaryKey(),
             'valueField' => $this->getDisplayField(),
-            'groupField' => null
+            'groupField' => null,
         ];
 
         if (isset($options['idField'])) {
@@ -1446,7 +1450,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             deprecationWarning('Option "idField" is deprecated, use "keyField" instead.');
         }
 
-        if (!$query->clause('select') &&
+        if (
+            !$query->clause('select') &&
             !is_object($options['keyField']) &&
             !is_object($options['valueField']) &&
             !is_object($options['groupField'])
@@ -1506,7 +1511,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'keyField' => $this->getPrimaryKey(),
             'parentField' => 'parent_id',
-            'nestingKey' => 'children'
+            'nestingKey' => 'children',
         ];
 
         if (isset($options['idField'])) {
@@ -1682,6 +1687,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1711,6 +1717,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1722,14 +1729,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
-            $entity->set($search, ['guard' => false]);
+            $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
+            $entity = $this->patchEntity($entity, $search, ['accessibleFields' => $accessibleFields]);
         }
         if ($callback !== null) {
             $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
 
-        return $this->save($entity, $options) ?: $entity;
+        $result = $this->save($entity, $options);
+
+        if ($result === false) {
+            throw new PersistenceFailedException($entity, ['findOrCreate']);
+        }
+
+        return $entity;
     }
 
     /**
@@ -1905,7 +1919,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'associated' => true,
             'checkRules' => true,
             'checkExisting' => true,
-            '_primary' => true
+            '_primary' => true,
         ]);
 
         if ($entity->hasErrors($options['associated'])) {
@@ -2143,8 +2157,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Note: The ORM will not generate primary key values for composite primary keys.
      * You can overwrite _newId() in your table class.
      *
-     * @param array $primary The primary key columns to get a new ID for.
-     * @return null|string|array Either null or the primary key value or a list of primary key values.
+     * @param string[] $primary The primary key columns to get a new ID for.
+     * @return string|null Either null or the primary key value or a list of primary key values.
      */
     protected function _newId($primary)
     {
@@ -2294,7 +2308,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
                 'entity' => $entity,
-                'options' => $options
+                'options' => $options,
             ]);
         }
 
@@ -2351,7 +2365,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $event = $this->dispatchEvent('Model.beforeDelete', [
             'entity' => $entity,
-            'options' => $options
+            'options' => $options,
         ]);
 
         if ($event->isStopped()) {
@@ -2376,7 +2390,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $this->dispatchEvent('Model.afterDelete', [
             'entity' => $entity,
-            'options' => $options
+            'options' => $options,
         ]);
 
         return $success;
@@ -2476,7 +2490,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } elseif ($hasOr !== false) {
             $fields = explode('_or_', $fields);
             $conditions = [
-            'OR' => $makeConditions($fields, $args)
+            'OR' => $makeConditions($fields, $args),
             ];
         } elseif ($hasAnd !== false) {
             $fields = explode('_and_', $fields);
@@ -2526,9 +2540,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $association = $this->_associations->get($property);
         if (!$association) {
             throw new RuntimeException(sprintf(
-                'Table "%s" is not associated with "%s"',
-                get_class($this),
-                $property
+                'Undefined property `%s`. ' .
+                'You have not defined the `%s` association on `%s`.',
+                $property,
+                $property,
+                static::class
             ));
         }
 
@@ -2793,7 +2809,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             [
                 'useSetters' => false,
                 'markNew' => $context['newRecord'],
-                'source' => $this->getRegistryAlias()
+                'source' => $this->getRegistryAlias(),
             ]
         );
         $fields = array_merge(
@@ -2918,7 +2934,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function loadInto($entities, array $contain)
     {
-        return (new LazyEagerLoader)->loadInto($entities, $contain, $this);
+        return (new LazyEagerLoader())->loadInto($entities, $contain, $this);
     }
 
     /**
@@ -2949,7 +2965,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'associations' => $associations ? $associations->keys() : false,
             'behaviors' => $behaviors ? $behaviors->loaded() : false,
             'defaultConnection' => static::defaultConnectionName(),
-            'connectionName' => $conn ? $conn->configName() : null
+            'connectionName' => $conn ? $conn->configName() : null,
         ];
     }
 }

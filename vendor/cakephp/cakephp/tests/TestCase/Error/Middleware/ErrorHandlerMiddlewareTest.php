@@ -44,7 +44,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->logger
+            'engine' => $this->logger,
         ]);
     }
 
@@ -109,7 +109,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response;
+            $response = new Response();
             $mock = $this->getMockBuilder('StdClass')
                 ->setMethods(['render'])
                 ->getMock();
@@ -167,7 +167,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains('"message": "whoops"', '' . $result->getBody());
-        $this->assertEquals('application/json; charset=UTF-8', $result->getHeaderLine('Content-type'));
+        $this->assertEquals('application/json', $result->getHeaderLine('Content-type'));
     }
 
     /**
@@ -209,7 +209,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
-            'HTTP_REFERER' => '/other/path'
+            'HTTP_REFERER' => '/other/path',
         ]);
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
@@ -241,7 +241,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
-            'HTTP_REFERER' => '/other/path'
+            'HTTP_REFERER' => '/other/path',
         ]);
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
@@ -268,7 +268,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, [
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException']
+            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
         $next = function ($req, $res) {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');

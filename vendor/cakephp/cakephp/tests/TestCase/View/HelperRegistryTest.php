@@ -334,7 +334,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigured()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
+        $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
     }
@@ -347,7 +347,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigValues()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
+        $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
     }
@@ -362,12 +362,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
         $result = $this->Helpers->normalizeArray($config);
         $expected = [
@@ -375,15 +375,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -400,12 +400,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
 
         $result1 = $this->Helpers->normalizeArray($config);
@@ -415,15 +415,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result2);

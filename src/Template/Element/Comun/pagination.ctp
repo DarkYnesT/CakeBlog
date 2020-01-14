@@ -1,4 +1,4 @@
-<?
+<?php
    $this->Paginator->setTemplates([
       'prevDisabled' => '<li class="page-item disabled shadow-sm"><a class="page-link" href="{{url}}">&laquo;</a></li>',
       'prevActive' => '<li class="page-item shadow-sm"><a class="page-link" href="{{url}}">&laquo;</a></li>',
@@ -8,7 +8,7 @@
       'nextDisabled' => '<li class="page-item disabled shadow-sm"><a class="page-link" href="{{url}}">&raquo;</a></li>',
    ]);
 ?>
-<? if ($this->Paginator->numbers()): ?>
+<?php if ($this->Paginator->numbers()): ?>
 <nav aria-label="Page navigation example">
    <ul class="pagination justify-content-center mt-3">
       <?= $this->Paginator->prev('&laquo;', ['tag' => 'li', 'escape' => false]); ?>
@@ -16,4 +16,4 @@
       <?= $this->Paginator->next('&raquo;', ['tag' => 'li', 'escape' => false]); ?>
    </ul>
 </nav>
-<? endif; ?>
+<?php endif; ?>

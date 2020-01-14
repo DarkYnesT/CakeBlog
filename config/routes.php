@@ -17,13 +17,12 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
 
-/**
+/*
  * The default class to use for all routes
  *
  * The following route classes are supplied with CakePHP and are appropriate
@@ -52,9 +51,9 @@ Router::scope('/', function (RouteBuilder $routes) {
    //    'httpOnly' => true
    //]));
 
-   /**
+   /*
     * Apply a middleware to the current route scope.
-    * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
+    * Requires middleware to be registered through `Application::routes()` with `registerMiddleware()`
     */
    //$routes->applyMiddleware('csrf');
 
@@ -69,7 +68,7 @@ Router::scope('/', function (RouteBuilder $routes) {
    $routes->connect('/logout', ['controller' => 'users', 'action' => 'logout']);
    $routes->connect('/register', ['controller' => 'users', 'action' => 'register']);
 
-   /**
+   /*
     * Connect catchall routes for all controllers.
     *
     * Using the argument `DashedRoute`, the `fallbacks` method is a shortcut for
@@ -91,7 +90,7 @@ Router::scope('/', function (RouteBuilder $routes) {
    $routes->fallbacks(DashedRoute::class);
 });
 
-/**
+/*
  * If you need a different set of middleware or none at all,
  * open new scope and define routes there.
  *

@@ -461,7 +461,15 @@ class NumberTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->Number->toPercentage(0.456, 2, ['locale' => 'de-DE', 'multiply' => true]);
-        $expected = '45,60%';
+        $expected = '45,60 %';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->toPercentage(13, 0, ['locale' => 'fi_FI']);
+        $expected = '13 %';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->toPercentage(0.13, 0, ['locale' => 'fi_FI', 'multiply' => true]);
+        $expected = '13 %';
         $this->assertEquals($expected, $result);
     }
 
@@ -559,7 +567,7 @@ class NumberTest extends TestCase
         $this->assertEquals('₹ 15,000.00', $result);
 
         Number::config('en_IN', \NumberFormatter::CURRENCY, [
-            'pattern' => '¤ #,##,##0'
+            'pattern' => '¤ #,##,##0',
         ]);
 
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
@@ -581,7 +589,7 @@ class NumberTest extends TestCase
         $this->assertEquals('2nd', $result);
 
         $result = $this->Number->ordinal(2, [
-            'locale' => 'fr_FR'
+            'locale' => 'fr_FR',
         ]);
         $this->assertEquals('2e', $result);
 

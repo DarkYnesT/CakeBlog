@@ -6,17 +6,17 @@
       ) ?>
    </div>
    <div class="mb-2">
-      <? if (!empty($this->request->query['q'])): ?>
+      <?php if (!empty($this->request->query['q'])): ?>
          <?= $this->Html->link("Limpiar Busqueda",
             ['action' => 'index'],
             ['class' => 'btn btn-sm btn-outline-warning shadow-sm']
          ) ?>
-      <? endif; ?>
+      <?php endif; ?>
    </div>
-   <? foreach ($articles as $article): ?>
+   <?php foreach ($articles as $article): ?>
    <div class="mb-3">
       <h2 class="blog-post-title">
-         <a href="/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
+         <a href="/blog/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
             <?= $article->title ?>
          </a>
       </h2>
@@ -25,8 +25,8 @@
          <span class="text-capitalize"><?= $article->user->username ?></span>
       </p>
       <p><?= str_replace(array("\r\n", "\n\r", "\r", "\n"), "<br />", $article->body) ?></p>
-      <? if ($login) : ?>
-         <? if (($article->user_id == $this->request->session()->read('Auth.User.id')) || (
+      <?php if ($login) : ?>
+         <?php if (($article->user_id == $this->request->session()->read('Auth.User.id')) || (
             $this->request->session()->read('Auth.User.role') == 'admin')): ?>
             <div>
                <?= $this->Html->link('Editar',
@@ -41,9 +41,9 @@
                   ]
                ) ?>
             </div>
-         <? endif; ?>
-      <? endif; ?>
+         <?php endif; ?>
+      <?php endif; ?>
    </div>
-   <? endforeach; ?>
+   <?php endforeach; ?>
    <?= $this->element('Comun/pagination') ?>
 </div>
