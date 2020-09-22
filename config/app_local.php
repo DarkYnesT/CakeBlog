@@ -46,7 +46,7 @@ return [
             'username' => 'root',
             'password' => '',
             'database' => 'cakeblog',
-            'log' => true,
+            'log' => false,
             'url' => env('DATABASE_URL', null),
         ],
     ],
