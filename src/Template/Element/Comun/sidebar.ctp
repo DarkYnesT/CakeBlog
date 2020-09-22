@@ -6,7 +6,7 @@
    <h4 class="font-italic">Articles</h4>
    <ol class="list-unstyled mb-0">
       <?php foreach ($allArticles as $article): ?>
-         <li><a href="/blog/articulo/<?= $article->id ?>"><?= $article->title ?></a></li>
+         <li><a href="/articulo/<?= $article->id ?>"><?= $article->title ?></a></li>
       <?php endforeach; ?>
    </ol>
 </div>

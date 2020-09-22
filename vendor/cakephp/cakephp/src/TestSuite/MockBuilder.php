@@ -14,6 +14,8 @@
  */
 namespace Cake\TestSuite;
 
+loadPHPUnitAliases();
+
 use PHPUnit\Framework\MockObject\MockBuilder as BaseMockBuilder;
 
 /**
@@ -28,12 +30,28 @@ class MockBuilder extends BaseMockBuilder
      */
     public function getMock()
     {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_DEPRECATED);
+        static::setSupressedErrorHandler();
+
         try {
             return parent::getMock();
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
         }
+    }
+
+    /**
+     * Set error handler to supress `ReflectionType::__toString()` deprecation warning
+     *
+     * @return void
+     */
+    public static function setSupressedErrorHandler()
+    {
+        $previousHandler = set_error_handler(function ($code, $description, $file = null, $line = null, $context = null) use (&$previousHandler) {
+            if (($code & E_DEPRECATED) && ($description === 'Function ReflectionType::__toString() is deprecated')) {
+                return true;
+            }
+
+            return $previousHandler($code, $description, $file, $line, $context);
+        });
     }
 }

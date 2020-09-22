@@ -750,8 +750,8 @@ abstract class TestCase extends BaseTestCase
         $callAutoload = true,
         $cloneArguments = false
     ) {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_DEPRECATED);
+        MockBuilder::setSupressedErrorHandler();
+
         try {
             return parent::getMockClass(
                 $originalClassName,
@@ -764,7 +764,38 @@ abstract class TestCase extends BaseTestCase
                 $cloneArguments
             );
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getMockForTrait(
+        $traitName,
+        array $arguments = [],
+        $mockClassName = '',
+        $callOriginalConstructor = true,
+        $callOriginalClone = true,
+        $callAutoload = true,
+        $mockedMethods = [],
+        $cloneArguments = false
+    ) {
+        MockBuilder::setSupressedErrorHandler();
+
+        try {
+            return parent::getMockForTrait(
+                $traitName,
+                $arguments,
+                $mockClassName,
+                $callOriginalConstructor,
+                $callOriginalClone,
+                $callAutoload,
+                $mockedMethods,
+                $cloneArguments
+            );
+        } finally {
+            restore_error_handler();
         }
     }
 
@@ -781,8 +812,8 @@ abstract class TestCase extends BaseTestCase
         $mockedMethods = [],
         $cloneArguments = false
     ) {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_DEPRECATED);
+        MockBuilder::setSupressedErrorHandler();
+
         try {
             return parent::getMockForAbstractClass(
                 $originalClassName,
@@ -795,7 +826,7 @@ abstract class TestCase extends BaseTestCase
                 $cloneArguments
             );
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
         }
     }
 

@@ -25,7 +25,7 @@ return [
      *   You should treat it as extremely sensitive data.
      */
     'Security' => [
-        'salt' => env('SECURITY_SALT', 'cakephp3_blog'),
+        'salt' => env('SECURITY_SALT', '382EE7B38646FEBA5CEB9614B276244D'),
     ],
 
     /*

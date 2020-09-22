@@ -9,7 +9,7 @@
 </div>
 <div class="form-group">
    <label for="username" class="sr-only">Username</label>
-   <?= $this->Form->input('username', [
+   <?= $this->Form->control('username', [
       'label' => false,
       'class' => 'form-control f-2 shadow-sm',
       'placeholder' => 'Username'
@@ -17,7 +17,7 @@
 </div>
 <div class="form-group">
    <label for="password" class="sr-only">Password</label>
-   <?= $this->Form->input('password', [
+   <?= $this->Form->control('password', [
       'label' => false,
       'class' => 'form-control f-2 shadow-sm',
       'placeholder' => 'Password'

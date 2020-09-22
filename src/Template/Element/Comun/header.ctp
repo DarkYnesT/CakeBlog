@@ -7,10 +7,10 @@
          <a class="blog-header-logo text-dark" href="/">Blog</a>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
-         <?php if($this->request->session()->check('Auth.User')): ?>
+         <?php if($this->request->getSession()->check('Auth.User')): ?>
             <span class="pr-3 text-capitalize">
                Bienvenido:
-               <?= $this->request->session()->read('Auth.User.username') ?>
+               <?= $this->request->getSession()->read('Auth.User.username') ?>
             </span>
             <a class="btn btn-sm btn-outline-secondary shadow-sm" href="/logout">
                Log out
@@ -37,7 +37,7 @@
    ]) ?>
    <div class="col-10 col-md-11 p-0">
       <label class="sr-only" for="buscador">Buscar</label>
-      <?= $this->Form->input('q', [
+      <?= $this->Form->control('q', [
          'templates' => [
             'inputContainer' => '<div class="form-group mb-0">{{content}}</div>'
          ],
@@ -45,7 +45,7 @@
          'id' => 'buscador',
          'class' => 'form-control w-100 shadow-sm',
          'placeholder' => 'Buscar...',
-         'value' => !empty($this->request->query) ? $this->request->getQuery('q') : ''
+         'value' => !empty($this->request->getQuery('q')) ? $this->request->getQuery('q') : ''
       ]) ?>
    </div>
    <div class="col-2 col-md-1 p-0">

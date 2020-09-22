@@ -5,7 +5,7 @@
 
    <div class="form-group">
       <label for="title" class="sr-only">Title</label>
-      <?= $this->Form->input('title', [
+      <?= $this->Form->control('title', [
          'label' => false,
          'class' => 'form-control f-2 shadow-sm',
          'placeholder' => 'Title'
@@ -13,7 +13,7 @@
    </div>
    <div class="form-group">
       <label for="body" class="sr-only">Body</label>
-      <?= $this->Form->input('body', [
+      <?= $this->Form->control('body', [
          'rows' => '6',
          'label' => false,
          'class' => 'form-control f-2 shadow-sm',

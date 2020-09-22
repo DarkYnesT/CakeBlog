@@ -6,7 +6,7 @@
       ) ?>
    </div>
    <div class="mb-2">
-      <?php if (!empty($this->request->query['q'])): ?>
+      <?php if (!empty($this->request->getQuery('q'))): ?>
          <?= $this->Html->link("Limpiar Busqueda",
             ['action' => 'index'],
             ['class' => 'btn btn-sm btn-outline-warning shadow-sm']
@@ -16,7 +16,7 @@
    <?php foreach ($articles as $article): ?>
    <div class="mb-3">
       <h2 class="blog-post-title">
-         <a href="/blog/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
+         <a href="/articulo/<?= $article->id ?>" class="text-decoration-none text-dark">
             <?= $article->title ?>
          </a>
       </h2>
@@ -26,8 +26,8 @@
       </p>
       <p><?= str_replace(array("\r\n", "\n\r", "\r", "\n"), "<br />", $article->body) ?></p>
       <?php if ($login) : ?>
-         <?php if (($article->user_id == $this->request->session()->read('Auth.User.id')) || (
-            $this->request->session()->read('Auth.User.role') == 'admin')): ?>
+         <?php if (($article->user_id == $this->request->getSession()->read('Auth.User.id')) || (
+            $this->request->getSession()->read('Auth.User.role') == 'admin')): ?>
             <div>
                <?= $this->Html->link('Editar',
                   ['action' => 'edit', $article->id],
