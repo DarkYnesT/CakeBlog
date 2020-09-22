@@ -201,3 +201,9 @@ Type::build('timestamp')
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
+
+// Disable cache
+Configure::write("Cache.disable", true);
+
+// Enable debugkit
+Configure::write('DebugKit.forceEnable', true);
